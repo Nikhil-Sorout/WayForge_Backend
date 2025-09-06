@@ -3,6 +3,7 @@ import js from '@eslint/js';
 import typescriptPlugin from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
 import prettierConfig from 'eslint-config-prettier';
+import eslintPluginNode from "eslint-plugin-node";
 
 export default [
   // Apply basic recommended JavaScript rules
@@ -14,7 +15,7 @@ export default [
       '**/*.ts',
       '**/*.tsx',
       'gateway/**/*.ts',
-      'services/**/*.ts', 
+      'services/**/*.ts',
       'shared/**/*.ts',
       'workers/**/*.ts'
     ],
@@ -34,16 +35,26 @@ export default [
         ecmaVersion: 'latest',
         sourceType: 'module',
       },
+      globals: {
+        process: 'readonly',
+        require: 'readonly',
+        module: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+      },
     },
     plugins: {
       '@typescript-eslint': typescriptPlugin,
+      node: eslintPluginNode,
     },
     rules: {
       ...typescriptPlugin.configs.recommended.rules,
-      
+
       // You can customize rules here
       '@typescript-eslint/no-unused-vars': 'error',
       'no-undef': 'error',
+      'node/no-process-env': 'off', // Optional: enforce process.env usage
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
 
