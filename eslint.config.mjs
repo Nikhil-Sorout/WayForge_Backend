@@ -2,13 +2,17 @@
 import js from '@eslint/js';
 import typescriptPlugin from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
-import prettierConfig from 'eslint-config-prettier';
-import eslintPluginNode from "eslint-plugin-node";
+import prettier from 'eslint-config-prettier';
+import nodePlugin from 'eslint-plugin-node';
+import globals from 'globals';
 
 export default [
   // Apply basic recommended JavaScript rules
   js.configs.recommended,
-
+  
+  // Prettier config must be applied separately
+  prettier,
+  
   // Configure TypeScript support for ALL your source files
   {
     files: [
@@ -34,30 +38,25 @@ export default [
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
+        project: './tsconfig.json' // Add this if using type-aware rules
       },
       globals: {
-        process: 'readonly',
-        require: 'readonly',
-        module: 'readonly',
-        __dirname: 'readonly',
-        __filename: 'readonly',
+        ...globals.node, // This includes all Node.js globals
+        ...nodePlugin.environments?.node?.globals, // Additional Node globals from plugin
       },
     },
     plugins: {
       '@typescript-eslint': typescriptPlugin,
-      node: eslintPluginNode,
+      node: nodePlugin,
     },
     rules: {
       ...typescriptPlugin.configs.recommended.rules,
-
+      
       // You can customize rules here
       '@typescript-eslint/no-unused-vars': 'error',
-      'no-undef': 'error',
+      'no-undef': 'off', // TypeScript already handles this
       'node/no-process-env': 'off', // Optional: enforce process.env usage
       '@typescript-eslint/no-explicit-any': 'off',
     },
   },
-
-  // Disable rules that conflict with Prettier
-  prettierConfig,
 ];
